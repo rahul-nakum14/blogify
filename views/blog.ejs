@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- <meta http-equiv="refresh" content="1" /> -->
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <%- include('./partials/head') %>
+    <title>Home Page</title>
+    <style>
+      /* Add these styles to your existing style block or stylesheet */
+      .like-section {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+      }
+
+      .like-button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+      }
+
+      .like-count {
+        font-size: 1.2em;
+      }
+
+      /* Add your custom styles here */
+      body {
+        background-color: #f8f9fa; /* Set a light background color */
+      }
+
+      .blog-container {
+        margin-top: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .blog-title {
+        font-size: 2em;
+        margin-bottom: 10px;
+      }
+
+      .blog-cover-image-container {
+        overflow: hidden;
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
+
+      .blog-cover-image {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+      }
+
+      .blog-body {
+        white-space: pre-wrap;
+        font-size: 1.2em;
+        line-height: 1.6;
+      }
+
+      .author-info {
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+      }
+
+      .author-image {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .created-by-container {
+        margin-left: 10px;
+      }
+
+      .created-by-container p {
+        margin: 0;
+      }
+
+      .comment-container {
+        margin-top: 40px;
+      }
+
+      .comment-form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .comment-form input {
+        flex: 1;
+        border-radius: 5px;
+        padding: 8px;
+        border: 1px solid #ddd;
+      }
+
+      .comment-form button {
+        border-radius: 5px;
+        padding: 8px 12px;
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+
+      .comment-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .comment {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .comment-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .comment-content {
+        flex: 1;
+      }
+    </style>
+    <script>
+      function formatDate(dateString) {
+        const options = { year: "numeric", month: "long", day: "numeric" };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+      }
+    </script>
+  </head>
+  <body>
+    <%- include('./partials/navbar') %>
+    <div class="container blog-container">
+      <% if (!blog.isPrivate || (locals.user &&
+      blog.createdBy.equals(locals.user._id))) { %>
+      <h1 class="blog-title"><%= blog.title %></h1>
+      <div class="blog-cover-image-container">
+        <img
+          class="blog-cover-image"
+          src="<%= blog.coverImageUrl %>"
+          alt="Blog Cover Image"
+        />
+      </div>
+      <p class="blog-body"><%= blog.body %></p>
+      <% } else { %>
+      <p>This is a private blog post, and you do not have access to view it.</p>
+      <% } %>
+
+      <div class="author-info">
+        <img
+          class="author-image"
+          src="<%= blog.createdBy.profileImageURL %>"
+          alt="Author Image"
+        />
+        <div class="created-by-container">
+          <p>Created By</p>
+          <strong><%= blog.createdBy.fullname %></strong>
+          <p><%= (blog.createdAt) %></p>
+        </div>
+      </div>
+      <div class="like-section">
+        <button class="like-button" onclick="toggleLike('<%= blog._id %>')">
+          <i class="fas fa-thumbs-up"></i> <span id="like-text">Like</span>
+        </button>
+        <button
+          class="bookmark-button"
+          onclick="addBookmark('<%= blog._id %>')"
+        >
+          Bookmark
+          <i class="fas fa-bookmark"></i>
+        </button>
+
+        <!-- <span id="bookmark-text-<%= blog._id %>" style="font-weight: bold">
+            <%= blog.isBookmarked ? "Bookmarked" : "Bookmark" %>
+          </span> -->
+
+        <span class="like-count" id="like-count-<%= blog._id %>"
+          ><%= likesCount %> Likes</span
+        >
+      </div>
+    </div>
+
+    <div class="container comment-container">
+      <h2>Comments</h2>
+      <% if (locals.user) { %>
+      <form
+        class="comment-form"
+        action="/comment/<%= blog._id %>"
+        method="post"
+      >
+        <input
+          type="text"
+          name="content"
+          class="form-control rounded"
+          placeholder="Enter Your Comment"
+        />
+        <button class="btn btn-sm btn-primary" type="submit">Add</button>
+      </form>
+      <% } %>
+      <ul class="comment-list">
+        <% comments.forEach(comment => { %>
+        <li id="comment-<%= comment._id %>" class="comment">
+          <img
+            src="<%= comment.createdBy.profileImageURL %>"
+            class="comment-image"
+            alt="Commenter Image"
+          />
+          <div class="comment-content">
+            <strong><%= comment.createdBy.fullname %></strong>
+
+            <!-- Display comment content -->
+            <p id="comment-content-<%= comment._id %>">
+              <%= comment.content %>
+            </p>
+
+            <form
+              id="edit-comment-form-<%= comment._id %>"
+              class="comment-edit-form"
+              onsubmit="submitEditForm(event, '<%= comment._id %>')"
+            >
+              <textarea
+                name="editedContent"
+                class="form-control rounded"
+                style="display: none"
+              >
+<%= comment.content %></textarea
+              >
+              <button
+                class="btn btn-sm btn-success"
+                type="submit"
+                style="display: none"
+              >
+                Save
+              </button>
+            </form>
+
+            <div class="comment-actions">
+              <% if (locals.user && comment.createdBy.equals(locals.user._id)) {
+              %>
+              <a
+                href="#"
+                class="edit-comment"
+                onclick="toggleEdit('<%= comment._id %>')"
+                ><i class="fas fa-edit"></i> Edit</a
+              >
+              <a
+                href="#"
+                class="delete-comment"
+                onclick="deleteComment('<%= comment._id %>')"
+                ><i class="fas fa-trash"></i> Delete</a
+              >
+              <!-- Inside the blog-container div -->
+
+              <% } %>
+            </div>
+          </div>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+
+    <script>
+      async function toggleLike(blogId) {
+        try {
+          const response = await fetch(`/blog/${blogId}/like`, {
+            method: "POST",
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to toggle like");
+          }
+
+          const data = await response.json();
+          const likeCount = document.querySelector(`#like-count-${blogId}`); // Update the selector
+          const likeText = document.querySelector("#like-text");
+
+          likeCount.textContent = `${data.likes.length} Likes`;
+          likeText.textContent = data.isLiked ? "Like" : "Like";
+        } catch (error) {
+          console.error("Error toggling like:", error);
+        }
+      }
+
+      async function toggleBookmark(blogId) {
+        try {
+          const response = await fetch(`/blog/${blogId}/bookmark`, {
+            method: "POST",
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to toggle bookmark");
+          }
+
+          const data = await response.json();
+          const bookmarkText = document.querySelector(
+            `#bookmark-text-${blogId}`
+          );
+
+          // Update the bookmark text
+          bookmarkText.textContent = data.isBookmarked
+            ? "Bookmarked"
+            : "Bookmark";
+
+          const blogElement = document.querySelector(`#blog-${blogId}`);
+          if (blogElement) {
+            blogElement.dataset.isBookmarked = data.isBookmarked;
+          }
+
+          // If the user is logged in, update the user's bookmarks
+          const loggedInUserId = req.user ? req.user._id : null;
+          if (loggedInUserId) {
+            const userResponse = await fetch(
+              `/user/${loggedInUserId}/bookmarks`,
+              {
+                method: "GET",
+              }
+            );
+
+            if (userResponse.ok) {
+              const userData = await userResponse.json();
+
+              // Assuming userData.bookmarks is an array of blog IDs
+              // Update or replace the bookmarks array in the user model as needed
+            }
+          }
+        } catch (error) {
+          console.error("Error toggling bookmark:", error);
+        }
+      }
+
+      function toggleEdit(commentId) {
+        const commentContent = document.getElementById(
+          `comment-content-${commentId}`
+        );
+        const editForm = document.getElementById(
+          `edit-comment-form-${commentId}`
+        );
+
+        if (commentContent && editForm) {
+          commentContent.style.display = "none";
+
+          const textarea = editForm.querySelector("textarea");
+          const saveButton = editForm.querySelector("button");
+
+          textarea.style.display = "block";
+          saveButton.style.display = "block";
+        }
+      }
+
+      function submitEditForm(event, commentId) {
+        event.preventDefault();
+
+        const editedContent = document.querySelector(
+          `#edit-comment-form-${commentId} textarea[name="editedContent"]`
+        ).value;
+
+        fetch(`/comment/${commentId}/edit`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ editedContent }),
+        })
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Failed to update comment");
+            }
+          })
+          .then((data) => {
+            const commentContent = document.getElementById(
+              `comment-content-${commentId}`
+            );
+            commentContent.textContent = data.editedContent;
+
+            // Hide the edit form
+            const editForm = document.getElementById(
+              `edit-comment-form-${commentId}`
+            );
+            const textarea = editForm.querySelector("textarea");
+            const saveButton = editForm.querySelector("button");
+
+            textarea.style.display = "none";
+            saveButton.style.display = "none";
+
+            // Show the comment content
+            commentContent.style.display = "block";
+          })
+          .catch((error) => {
+            console.error("Error updating comment:", error);
+            // Handle error appropriately, e.g., display an error message
+          });
+      }
+
+      function deleteComment(commentid) {
+        console.log("Deleting comment:", commentid); // Check if this log is correct
+        if (confirm("Are you sure you want to delete this comment?")) {
+          fetch(`/comment/${commentid}/delete`, {
+            method: "DELETE",
+          })
+            .then((response) => {
+              console.log("Response status:", response.status);
+              console.log("Response status text:", response.statusText);
+              if (response.ok) {
+                const commentElement = document.getElementById(
+                  `comment-${commentid}`
+                );
+                if (commentElement) {
+                  commentElement.remove();
+                } else {
+                  console.error("Comment element not found:", commentid);
+                }
+              } else {
+                console.error("Failed to delete comment:", response.statusText);
+              }
+            })
+            .catch((error) => {
+              console.error("Error deleting comment:", error);
+            });
+        }
+      }
+
+      function likeBlog(blogId) {
+        fetch(`/blog/${blogId}/like`, {
+          method: "POST",
+        })
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Failed to like blog");
+            }
+          })
+          .then((data) => {
+            const likeCount = document.querySelector(
+              `#comment-count-${blogId}`
+            );
+            likeCount.textContent = `${data.likes.length} Likes`;
+          })
+          .catch((error) => {
+            console.error("Error liking blog:", error);
+          });
+      }
+
+      function addBookmark(blogId) {
+        fetch(`/blog/${blogId}/bookmark`, {
+          method: "POST",
+        })
+          .then((response) => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error("Failed to bookmark blog");
+            }
+          })
+          .catch((error) => {
+            console.error("Error bookmarking blog:", error);
+          })
+          .then((data) => {
+            if (data) {
+              const bookmarkButton = document.getElementById(
+                `bookmark-button-${blogId}`
+              );
+              const bookmarkText = document.getElementById(
+                `bookmark-text-${blogId}`
+              );
+
+              if (data.isBookmarked) {
+                bookmarkButton.classList.add("active");
+                bookmarkText.textContent = "Bookmarked";
+              } else {
+                bookmarkButton.classList.remove("active");
+                bookmarkText.textContent = "Bookmark";
+              }
+
+              const bookmarksList = document.getElementById(
+                "user-bookmarks-list"
+              );
+              if (bookmarksList) {
+                updateBookmarksList(data.bookmarks);
+              }
+            }
+          });
+      }
+
+      $("#like-button").on("click", function (event) {
+        likeBlog(blog._id);
+        location.reload();
+      });
+      $("#bookmark-button").on("click", function (event) {
+        toggleBookmark(blog._id);
+        location.reload();
+      });
+    </script>
+
+    <%- include('./partials/script') %>
+  </body>
+</html>

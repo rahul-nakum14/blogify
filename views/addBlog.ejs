@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('./partials/head') %>
+    <title>Home Page</title>
+</head>
+<body>
+    <%- include('./partials/navbar') %>
+    <% if (locals.user) { %>
+    <div class="container mt-3">
+        
+        <form action="/blog/add-new" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="blogTitle">Title</label>
+                <input type="text" class="form-control" id="blogTitle" name="blogTitle">
+            </div>
+            <div class="mb-3">
+                <label for="blogBody">Body</label>
+                <textarea class="form-control" placeholder="Leave a Description here" id="blogBody" name="blogBody"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="blogCoverImage">Cover Image</label>
+                <input type="file" class="form-control" id="blogCoverImage" name="blogCoverImage">
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="privatePost" name="privatePost">
+                <label class="form-check-label" for="privatePost">Want to make it Private Post</label>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+    <% } else { %>
+        <script>
+            window.location.href = "/users/signin";
+        </script>    <% } %>
+
+    <%- include('./partials/script') %>
+</body>
+</html>

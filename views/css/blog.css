@@ -1,0 +1,111 @@
+        /* Add your custom styles here */
+        body {
+            background-color: #f8f9fa; /* Set a light background color */
+        }
+
+        .blog-container {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-title {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .blog-cover-image-container {
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .blog-cover-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .blog-body {
+            white-space: pre-wrap;
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .author-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .created-by-container {
+            margin-left: 10px;
+        }
+
+        .created-by-container p {
+            margin: 0;
+        }
+
+        .comment-container {
+            margin-top: 40px;
+        }
+
+        .comment-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .comment-form input {
+            flex: 1;
+            border-radius: 5px;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .comment-form button {
+            border-radius: 5px;
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .comment-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .comment {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-image {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+    

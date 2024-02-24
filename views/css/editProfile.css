@@ -1,0 +1,56 @@
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.profile-image-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.profile-image {
+    height: 140px;
+    width: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.upload-input {
+    margin-top: 20px;
+}
+
+.form-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-label {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.form-control {
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.update-button {
+    background-color: #007bff;
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 20px;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+.update-button:hover {
+    background-color: #0056b3;
+}

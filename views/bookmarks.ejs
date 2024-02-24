@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('./partials/head') %>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookmarks</title>
+    <style>
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .bookmark-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .bookmark-item {
+        border: 1px solid #ddd;
+        margin-bottom: 20px;
+        background-color: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .bookmark-item a {
+        text-decoration: none;
+        color: #333;
+        display: block;
+      }
+
+      .bookmark-header {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+      }
+
+      .profile-image {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+
+      .username {
+        font-weight: bold;
+      }
+
+      .blog-cover-image {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+      }
+
+      .bookmark-content {
+        padding: 10px;
+      }
+
+      h2 {
+        margin-top: 0;
+      }
+
+      .blog-body {
+        color: #555;
+      }
+
+      .created-at {
+        color: #888;
+      }
+
+      .no-bookmarks {
+        color: #555;
+        text-align: center;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <%- include('./partials/navbar') %>
+
+    <div class="container">
+      <h1>Your Bookmarks</h1>
+
+      <% if (locals.user && userWithBookmarks) { %> <% if
+      (userWithBookmarks.length > 0) { %>
+      <ul class="bookmark-list">
+        <% userWithBookmarks.forEach((bookmark) => { %>
+        <li class="bookmark-item">
+          <a href="/blog/<%= bookmark._id %>">
+            <div class="bookmark-header">
+              <% if (bookmark.createdBy) { %>
+              <img
+                class="profile-image"
+                src="<%= bookmark.createdBy.profileImageURL %>"
+                alt="User Profile Image"
+              />
+              <span class="username"><%= bookmark.createdBy.fullname %></span>
+              <% } else { %>
+              <p class="username">Unknown User</p>
+              <% } %>
+            </div>
+
+            <img
+              class="blog-cover-image"
+              src="<%= bookmark.coverImageUrl %>"
+              alt="Blog Cover Image"
+            />
+          </a>
+          <div class="bookmark-content">
+            <h2>
+              <a href="/blog/<%= bookmark._id %>"><%= bookmark.title %></a>
+            </h2>
+            <p class="blog-body"><%= bookmark.body %></p>
+            <span class="created-at"
+              >Created at: <%= (bookmark.createdAt) %></span
+            >
+          </div>
+        </li>
+        <% }) %>
+      </ul>
+      <% } else { %>
+      <p class="no-bookmarks">No bookmarks found.</p>
+      <% } %> <% } else { %>
+      <script>
+        window.location.href = "/users/signin";
+      </script>
+      <% } %> <%- include("./partials/script") %>
+    </div>
+    
+  </body>
+</html>
