@@ -4,12 +4,16 @@ const User = require("./models/user");
 const { connectDb } = require("./db/connect");
 const cookieParser = require("cookie-parser");
 const { checkForAuthentication } = require("./middlewares/authentication");
+
+const { ensureEmailVerified } = require("./middlewares/emailVerify");
 const userRouter = require("./routes/userRouter");
 const blogRouter = require("./routes/blogRouter");
 const blogModel = require("./models/blog");
 const commentRouter = require("./routes/commentRouter");
 const editProfileRouter = require("./routes/editRouter");
 const visitProfileRouter = require("./routes/visitProfileRouter");
+
+require("dotenv").config();
 
 const app = express();
 const PORT = 5000;
@@ -19,15 +23,15 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(checkForAuthentication("token"));
 app.use(express.static(path.join(__dirname, "public")));
-app.use('/public', express.static(path.join(__dirname, 'public')));
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
 
 app.use("/users", userRouter);
-app.use("/blog", blogRouter);
-app.use("/comment", commentRouter);
-app.use("/users/editProfile", editProfileRouter);
+app.use("/blog", ensureEmailVerified, blogRouter);
+app.use("/comment", ensureEmailVerified, commentRouter);
+app.use("/users/editProfile", ensureEmailVerified, editProfileRouter);
 app.use("/users/", visitProfileRouter);
 
 app.use(express.urlencoded({ extended: true }));

@@ -2,6 +2,11 @@
 <html lang="en">
   <head>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    />
+
     <!-- <meta http-equiv="refresh" content="1" /> -->
 
     <link
@@ -11,15 +16,44 @@
     <%- include('./partials/head') %>
     <title>Home Page</title>
     <style>
-      /* Add these styles to your existing style block or stylesheet */
-      .like-section {
-        margin-top: 20px;
+      /* Styles for the enhanced bookmark button */
+      .like-button,
+      .bookmark-button {
         display: flex;
         align-items: center;
+        background-color: #fff;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        margin-bottom: 10px; /* Adjust as needed */
+      }
+      .like-button i,
+      .bookmark-button i {
+        margin-right: 5px;
+        color: #3498db; /* Blue color, you can adjust it */
+      }
+
+      .text-color-like {
+        color: black; /* Set the desired text color */
+      }
+      .bookmark-text {
+        margin-left: 5px;
+        color: black; /* Set the desired text color */
+      }
+
+      .bookmark-text.bookmarked {
+        color: #e44d26; /* Red color for bookmarked state, you can adjust it */
+      }
+
+      /* Add these styles to your existing style block or stylesheet */
+      .like-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
       }
 
       .like-button {
-        background-color: #007bff;
         color: #fff;
         border: none;
         padding: 8px 12px;
@@ -27,9 +61,9 @@
         cursor: pointer;
         margin-right: 10px;
       }
-
       .like-count {
         font-size: 1.2em;
+        color: #555;
       }
 
       /* Add your custom styles here */
@@ -50,6 +84,34 @@
         font-size: 2em;
         margin-bottom: 10px;
       }
+      .delete-blog-button {
+  background-color: #ff6347; /* Coral color */
+  color: #fff; /* White text */
+  border: none; /* Remove button border */
+  padding: 10px 20px; /* Add padding */
+  border-radius: 5px; /* Add border radius */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+.delete-blog-button:hover {
+  background-color: #ff4738; /* Darker coral color on hover */
+}
+.edit-blog-button {
+  background-color: #007bff; /* Blue color */
+  color: #fff; /* White text */
+  border: none; /* Remove button border */
+  padding: 10px 20px; /* Add padding */
+  border-radius: 5px; /* Add border radius */
+  cursor: pointer; /* Change cursor to pointer on hover */
+  text-decoration: none; /* Remove underline */
+}
+
+.edit-blog-button:hover {
+  background-color: #0056b3; /* Darker blue color on hover */
+  color: #fff; /* Maintain white text color on hover */
+  text-decoration: none; /* Remove underline */
+
+}
 
       .blog-cover-image-container {
         overflow: hidden;
@@ -61,6 +123,13 @@
         width: 100%;
         max-height: 400px;
         object-fit: cover;
+      }
+      .edit-blog-button {
+        display: auto;
+      }
+      .edit-delete-buttons {
+        display: flex;
+        justify-content: space-between;
       }
 
       .blog-body {
@@ -89,15 +158,16 @@
       .created-by-container p {
         margin: 0;
       }
-
       .comment-container {
-        margin-top: 40px;
+        margin-top: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
       }
 
-      .comment-form {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
+      .comment-form,
+      .comment-list {
+        width: 100%;
       }
 
       .comment-form input {
@@ -106,22 +176,16 @@
         padding: 8px;
         border: 1px solid #ddd;
       }
-
       .comment-form button {
-        border-radius: 5px;
-        padding: 8px 12px;
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        cursor: pointer;
+        margin-top: 10px; /* Adjust as needed */
       }
 
       .comment-list {
         list-style: none;
         padding: 0;
       }
-
       .comment {
+        width: 100%;
         display: flex;
         align-items: center;
         margin-bottom: 20px;
@@ -131,7 +195,6 @@
         background-color: #fff;
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
       }
-
       .comment-image {
         width: 40px;
         height: 40px;
@@ -142,7 +205,11 @@
       .comment-content {
         flex: 1;
       }
+      .small-text {
+        font-size: 16px; /* You can adjust the font size as needed */
+      }
     </style>
+
     <script>
       function formatDate(dateString) {
         const options = { year: "numeric", month: "long", day: "numeric" };
@@ -152,136 +219,196 @@
   </head>
   <body>
     <%- include('./partials/navbar') %>
-    <div class="container blog-container">
-      <% if (!blog.isPrivate || (locals.user &&
-      blog.createdBy.equals(locals.user._id))) { %>
-      <h1 class="blog-title"><%= blog.title %></h1>
-      <div class="blog-cover-image-container">
-        <img
-          class="blog-cover-image"
-          src="<%= blog.coverImageUrl %>"
-          alt="Blog Cover Image"
-        />
-      </div>
-      <p class="blog-body"><%= blog.body %></p>
-      <% } else { %>
-      <p>This is a private blog post, and you do not have access to view it.</p>
-      <% } %>
-
-      <div class="author-info">
-        <img
-          class="author-image"
-          src="<%= blog.createdBy.profileImageURL %>"
-          alt="Author Image"
-        />
-        <div class="created-by-container">
-          <p>Created By</p>
-          <strong><%= blog.createdBy.fullname %></strong>
-          <p><%= (blog.createdAt) %></p>
+    <div class="container">
+      <div class="container blog-container">
+        <% if (!blog.isPrivate || (locals.user &&
+        blog.createdBy.equals(locals.user._id))) { %>
+        <h1 class="blog-title"><%= blog.title %></h1>
+        <div class="blog-cover-image-container">
+          <img
+            class="blog-cover-image"
+            src="<%= blog.coverImageUrl %>"
+            alt="Blog Cover Image"
+          />
         </div>
-      </div>
-      <div class="like-section">
-        <button class="like-button" onclick="toggleLike('<%= blog._id %>')">
-          <i class="fas fa-thumbs-up"></i> <span id="like-text">Like</span>
-        </button>
-        <button
-          class="bookmark-button"
-          onclick="addBookmark('<%= blog._id %>')"
-        >
-          Bookmark
-          <i class="fas fa-bookmark"></i>
-        </button>
+        <p class="blog-body"><%= blog.body %></p>
+        <div class="edit-delete-buttons">
+          <div class="edit-blog">
+            <% if (locals.user && blog.createdBy.equals(locals.user._id)) { %>
+            <a href="/blog/edit/<%= blog._id %>" class="edit-blog-button">
+              <i class="fas fa-edit"></i> Edit Blog
+            </a>
+            <% } %>
+          </div>
 
-        <!-- <span id="bookmark-text-<%= blog._id %>" style="font-weight: bold">
-            <%= blog.isBookmarked ? "Bookmarked" : "Bookmark" %>
-          </span> -->
-
-        <span class="like-count" id="like-count-<%= blog._id %>"
-          ><%= likesCount %> Likes</span
-        >
-      </div>
+  <!-- Delete Blog Button -->
+    <div class="delete-blog">
+      <% if (locals.user && blog.createdBy.equals(locals.user._id)) { %>
+        <form
+          action="/blog/delete/<%= blog._id %>"
+          method="POST"        >
+        
+          <button type="submit" class="delete-blog-button" id="deleteButton">
+            <i class="fas fa-trash"></i> Delete Blog
+          </button>
+        </form>
+      <% } %>
     </div>
 
-    <div class="container comment-container">
-      <h2>Comments</h2>
-      <% if (locals.user) { %>
-      <form
-        class="comment-form"
-        action="/comment/<%= blog._id %>"
-        method="post"
-      >
-        <input
-          type="text"
-          name="content"
-          class="form-control rounded"
-          placeholder="Enter Your Comment"
-        />
-        <button class="btn btn-sm btn-primary" type="submit">Add</button>
-      </form>
-      <% } %>
-      <ul class="comment-list">
-        <% comments.forEach(comment => { %>
-        <li id="comment-<%= comment._id %>" class="comment">
+        </div>
+
+        <% } else { %>
+        <p>
+          This is a private blog post, and you do not have access to view it.
+        </p>
+        <% } %>
+        <div class="author-info">
           <img
-            src="<%= comment.createdBy.profileImageURL %>"
-            class="comment-image"
-            alt="Commenter Image"
+            class="author-image"
+            src="<%= blog.createdBy.profileImageURL %>"
+            alt="Author Image"
           />
-          <div class="comment-content">
-            <strong><%= comment.createdBy.fullname %></strong>
-
-            <!-- Display comment content -->
-            <p id="comment-content-<%= comment._id %>">
-              <%= comment.content %>
-            </p>
-
-            <form
-              id="edit-comment-form-<%= comment._id %>"
-              class="comment-edit-form"
-              onsubmit="submitEditForm(event, '<%= comment._id %>')"
-            >
-              <textarea
-                name="editedContent"
-                class="form-control rounded"
-                style="display: none"
-              >
-<%= comment.content %></textarea
-              >
-              <button
-                class="btn btn-sm btn-success"
-                type="submit"
-                style="display: none"
-              >
-                Save
-              </button>
-            </form>
-
-            <div class="comment-actions">
-              <% if (locals.user && comment.createdBy.equals(locals.user._id)) {
-              %>
-              <a
-                href="#"
-                class="edit-comment"
-                onclick="toggleEdit('<%= comment._id %>')"
-                ><i class="fas fa-edit"></i> Edit</a
-              >
-              <a
-                href="#"
-                class="delete-comment"
-                onclick="deleteComment('<%= comment._id %>')"
-                ><i class="fas fa-trash"></i> Delete</a
-              >
-              <!-- Inside the blog-container div -->
-
-              <% } %>
-            </div>
+          <div class="created-by-container">
+            <p>Created By</p>
+            <strong><%= blog.createdBy.fullname %></strong>
+            <p><%= blog.createdAtFormatted %></p>
           </div>
-        </li>
-        <% }) %>
-      </ul>
+        </div>
+
+        <div
+          class="like-section d-flex align-items-center justify-content-between mt-3"
+        >
+          <div class="d-flex align-items-center">
+            <button class="like-button" onclick="toggleLike('<%= blog._id %>')">
+              <i class="fas fa-thumbs-up"></i>
+              <span id="like-text" class="text-color-like">Like</span>
+            </button>
+            <span class="mb-2 small-text" id="like-count-<%= blog._id %>">
+              <%= likesCount %> Likes
+            </span>
+          </div>
+          <button
+            class="bookmark-button"
+            onclick="toggleBookmark('<%= blog._id %>')"
+          >
+            <i class="fas fa-bookmark"></i>
+            <span class="bookmark-text" id="bookmark-text-<%= blog._id %>"
+              >Bookmark</span
+            >
+          </button>
+        </div>
+      </div>
+
+      <div class="container comment-container">
+        <h2>Comments</h2>
+        <% if (locals.user) { %>
+        <form
+          class="comment-form"
+          action="/comment/<%= blog._id %>"
+          method="post"
+        >
+          <div class="d-flex mb-3">
+            <input
+              type="text"
+              name="content"
+              class="form-control rounded mr-2 flex-grow-1"
+              placeholder="Enter Your Comment"
+            />
+            <button class="btn btn-sm btn-primary" type="submit">Add</button>
+          </div>
+        </form>
+        <% } %>
+        <ul class="comment-list">
+          <% comments.forEach(comment => { %>
+          <li id="comment-<%= comment._id %>" class="comment">
+            <img
+              src="<%= comment.createdBy.profileImageURL %>"
+              class="comment-image"
+              alt="Commenter Image"
+              onclick="redirectToUserProfile('<%= comment.createdBy.fullname %>')"
+            />
+
+            <div class="comment-content">
+              <strong><%= comment.createdBy.fullname %></strong>
+
+              <!-- Display comment content -->
+              <p id="comment-content-<%= comment._id %>">
+                <%= comment.content %>
+              </p>
+
+              <form
+                id="edit-comment-form-<%= comment._id %>"
+                class="comment-edit-form"
+                onsubmit="submitEditForm(event, '<%= comment._id %>')"
+              >
+                <textarea
+                  name="editedContent"
+                  class="form-control rounded"
+                  style="display: none"
+                >
+<%= comment.content %></textarea
+                >
+                <button
+                  class="btn btn-sm btn-success mt-2"
+                  type="submit"
+                  style="display: none"
+                >
+                  Save
+                </button>
+              </form>
+
+              <div class="comment-actions mt-2">
+                <% if (locals.user && comment.createdBy.equals(locals.user._id))
+                { %>
+                <a
+                  href="#"
+                  class="edit-comment"
+                  onclick="toggleEdit('<%= comment._id %>')"
+                >
+                  <i class="fas fa-edit"></i> Edit
+                </a>
+                <a
+                  href="#"
+                  class="delete-comment ml-2"
+                  onclick="deleteComment('<%= comment._id %>')"
+                >
+                  <i class="fas fa-trash"></i> Delete
+                </a>
+                <% } %>
+              </div>
+            </div>
+          </li>
+          <% }) %>
+        </ul>
+      </div>
     </div>
 
     <script>
+      document.getElementById("deleteButton").addEventListener("click", function() {
+  if (confirm("Are you sure you want to delete this blog post?")) {
+    fetch(`/blog/delete/<%= blog._id %>`, {
+      method: 'DELETE'
+    })
+    .then(response => {
+      if (response.ok) {
+        window.location.href = '/'; // Redirect to the home page after deletion
+      } else {
+        console.error('Error deleting blog post');
+      }
+    })
+    .catch(error => console.error('Error deleting blog post:', error));
+  }
+});
+
+      function editBlog(blogId) {
+        window.location.replace("/blog/edit/" + blogId);
+      }
+
+      function redirectToUserProfile(fullname) {
+        const urlFriendlyFullname = encodeURIComponent(fullname);
+        window.location.href = `/users/${urlFriendlyFullname}`;
+      }
+
       async function toggleLike(blogId) {
         try {
           const response = await fetch(`/blog/${blogId}/like`, {
@@ -320,8 +447,8 @@
 
           // Update the bookmark text
           bookmarkText.textContent = data.isBookmarked
-            ? "Bookmarked"
-            : "Bookmark";
+            ? "Bookmark"
+            : "Bookmarked";
 
           const blogElement = document.querySelector(`#blog-${blogId}`);
           if (blogElement) {
@@ -406,12 +533,10 @@
             textarea.style.display = "none";
             saveButton.style.display = "none";
 
-            // Show the comment content
             commentContent.style.display = "block";
           })
           .catch((error) => {
             console.error("Error updating comment:", error);
-            // Handle error appropriately, e.g., display an error message
           });
       }
 
@@ -489,18 +614,9 @@
               );
 
               if (data.isBookmarked) {
-                bookmarkButton.classList.add("active");
                 bookmarkText.textContent = "Bookmarked";
               } else {
-                bookmarkButton.classList.remove("active");
                 bookmarkText.textContent = "Bookmark";
-              }
-
-              const bookmarksList = document.getElementById(
-                "user-bookmarks-list"
-              );
-              if (bookmarksList) {
-                updateBookmarksList(data.bookmarks);
               }
             }
           });

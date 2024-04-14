@@ -49,9 +49,6 @@ const editProfileControllerPost = async (req, res) => {
       return res.status(404).send("User not found");
     }
 
-    // Set default profile image URL
-    user.profileImageURL = "/images/userDefaultAvatar.jpeg";
-
     // Handle file upload if provided
     if (req.file) {
       user.profileImageURL = `/upload/${req.file.filename}`;
@@ -61,7 +58,8 @@ const editProfileControllerPost = async (req, res) => {
     // Update full name if provided
     if (fullname) {
       user.fullname = fullname;
-      req.user.fullname = fullname; // Update session data
+      req.user.fullname = fullname; // Update session data immediately
+      console.log('this is test',req.user.fullname);
     }
 
     // Update email if provided
@@ -73,7 +71,6 @@ const editProfileControllerPost = async (req, res) => {
     if (password) {
       // Hash the new password using bcrypt
       const hashedPassword = await bcrypt.hash(password, 10);
-
       user.password = hashedPassword;
     }
 

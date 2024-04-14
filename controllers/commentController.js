@@ -6,13 +6,11 @@ const add_comment = async (req, res) => {
     blogId: req.params.blogid,
     createdBy: req.user._id,
   });
-  console.log(req.params.blogid);
   return res.redirect(`/blog/${req.params.blogid}`);
 };
 
 const update_comment = async (req, res) => {
   try {
-    console.log("UPdateing", req.body);
     const { commentid } = req.params;
     const { editedContent } = req.body;
     console.log(commentid);
@@ -45,10 +43,8 @@ const update_comment = async (req, res) => {
 
 const delete_comment = async (req, res) => {
   try {
-    console.log("Comment CalledController");
     const { commentid } = req.params;
     console.log(req.params);
-    console.log(commentid);
     const comment = await commentModel
       .findById(commentid)
       .populate("createdBy");

@@ -22,6 +22,11 @@ const blogSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    status: {
+      type: String,
+      enum: ["draft", "published"],
+      default: "published",
+    },
     likes: [
       {
         type: mongoose.Schema.Types.ObjectId,

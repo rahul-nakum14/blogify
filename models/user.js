@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { generateSalt, hashPassword } = require("../utills/passwordUtils");
 
 const userSchema = new mongoose.Schema(
   {
@@ -16,6 +15,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    token:{
+      type: String
+    },
+    resetPasswordToken:{
+      type: String
+    },
     profileImageURL: {
       type: String,
       default: "/images/userDefaultAvatar.jpeg",
@@ -26,10 +31,36 @@ const userSchema = new mongoose.Schema(
         ref: "blogModel", // Reference to the Blog model
       },
     ],
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "userModel",
+      },
+    ],
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "userModel",
+      },
+    ],
+    notifications: [
+      {
+        sender: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "userModel",
+        },
+        receiver: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "userModel",
+        },
+        type: String,
+        createdAt: Date,
+      },
+    ],
+    isEmailVerified: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
-
 
 const User = mongoose.model("userModel", userSchema);
 

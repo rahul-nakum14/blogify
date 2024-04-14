@@ -8,7 +8,6 @@
     <%- include('./partials/navbar') %>
     <% if (locals.user) { %>
     <div class="container mt-3">
-        
         <form action="/blog/add-new" method="post" enctype="multipart/form-data">
             <div class="mb-3">
                 <label for="blogTitle">Title</label>
@@ -34,7 +33,8 @@
     <% } else { %>
         <script>
             window.location.href = "/users/signin";
-        </script>    <% } %>
+        </script>    
+    <% } %>
 
     <%- include('./partials/script') %>
 </body>

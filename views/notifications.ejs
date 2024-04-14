@@ -1,0 +1,38 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifications</title>
+</head>
+
+<body>
+  <h1>Notifications</h1>
+
+  <% if (user.notifications.length > 0) { %>
+    <ul>
+      <% user.notifications.forEach(notification => { %>
+        <li>
+          <% if (notification.type === 'followRequest') { %>
+            <p>
+              <strong><%= notification.sender.fullname %></strong> wants to follow you.
+              <a href="/acceptFollow/<%= notification._id %>">Accept</a>
+              <a href="/rejectFollow/<%= notification._id %>">Reject</a>
+            </p>
+          <% } else if (notification.type === 'follow') { %>
+            <p><strong><%= notification.sender.fullname %></strong> started following you.</p>
+          <% } else { %>
+          <% } %>
+          <p><em><%= new Date(notification.createdAt).toLocaleString() %></em></p>
+        </li>
+      <% }); %>
+    </ul>
+  <% } else { %>
+    <p>No notifications</p>
+  <% } %>
+
+  <a href="/">Go back to Home</a>
+</body>
+
+</html> -->

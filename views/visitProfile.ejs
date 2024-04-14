@@ -4,141 +4,253 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Profile</title>
-    <style>
-      body {
-        font-family: "Arial", sans-serif;
-        background-color: #fafafa;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100vh;
-      }
-
-      h1 {
-        color: #333;
-        margin-bottom: 20px;
-      }
-
-      .profile-container {
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        width: 600px; /* Adjust the width as needed */
-        overflow: hidden; /* Hide overflowing content */
-      }
-
-      .profile-image {
-        width: 100px;
-        height: 100px; /* Adjust the height as needed */
-      }
-
-      .profile-image img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 50%;
-      }
-
-      p {
-        color: #555;
-        margin: 10px 0;
-      }
-
-      .followers,
-      .following {
-        font-weight: bold;
-        color: #333;
-        margin-top: 15px;
-      }
-
-      .social-stats {
-        display: flex;
-        justify-content: space-around;
-        margin-top: 20px;
-        padding: 10px;
-        background-color: #f0f0f0;
-      }
-
-      .social-stats div {
-        flex: 1;
-      }
-
-      /* Style for blogs */
-      .blogs {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 20px;
-        padding: 20px;
-      }
-
-      .blog-item {
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        overflow: hidden;
-      }
-
-      .blog-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin: 0;
-        padding: 10px;
-        background-color: #333;
-        color: #fff;
-      }
-
-      .blog-cover-image {
-        width: 100%;
-        max-height: 200px; /* Adjust the maximum height as needed */
-        object-fit: cover;
-      }
-
-      .blog-body {
-        color: #333;
-        padding: 10px;
-      }
-    </style>
   </head>
+  <style>
+    /* styles.css or in your <style> tag in the HTML file */
+    .follow-button {
+      background-color: #3498db;
+      color: #fff;
+      padding: 8px 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    .blog-item {
+      cursor: pointer;
+      transition: background-color 0.3s ease; /* Optional: Add a smooth transition effect */
+    }
+
+    .blog-item:hover {
+      background-color: #f0f0f0; /* Optional: Change background color on hover */
+    }
+
+    .blog-item-link {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .blog-cover-image img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+    }
+
+    body {
+      font-family: "Arial", sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+    }
+
+    .profile-container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+    }
+
+    .profile-image img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-right: 20px;
+    }
+
+    .profile-details {
+      flex: 1;
+    }
+
+    h1 {
+      margin: 0;
+      color: #333;
+    }
+
+    .email {
+      color: #555;
+    }
+
+    .social-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 10px;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .label {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .count {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .blogs {
+      margin-top: 20px;
+    }
+
+    .blog-item {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .blog-header {
+      background-color: #333;
+      padding: 10px;
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .blog-title {
+      margin: 0;
+    }
+
+    .created-at {
+      font-size: 12px;
+      color: #888;
+    }
+
+    .blog-cover-image img {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+    }
+
+    .blog-body {
+      padding: 10px;
+      color: #333;
+    }
+
+    .no-blogs {
+      color: #555;
+      text-align: center;
+    }
+  </style>
   <body>
     <div class="profile-container">
-      <div class="profile-image">
-        <img
-          src="/images/userDefaultAvatar.jpeg"
-          alt="Profile Image"
-          height="100px"
-          width="100px"
-        />
-      </div>
-      <h1><%= user.fullname %></h1>
-      <p>Email: <%= user.email %></p>
-      <div class="social-stats">
-        <div>
-          <p class="followers">Followers</p>
-          <p><%= user.followers %></p>
+      <div class="profile-header">
+        <div class="profile-image">
+          <img src="<%= profileImageURL %>" alt="Profile Image" />
         </div>
-        <div>
-          <p class="following">Following</p>
-          <p><%= user.following %></p>
-        </div>
-      </div>
+        <div class="profile-details">
+          <h1><%= user.fullname %></h1>
+          <div class="social-stats">
+            <div class="stat">
+              <p class="label">Followers</p>
+              <div class="count-and-button">
+                <p class="count" id="followersCount"><%= user.followers.length %></p>
+                <button id="followButton" style="background-color: #007bff; color: #fff; border: none; padding: 8px 16px; font-size: 16px; cursor: pointer; border-radius: 4px;" onclick="followUser('<%= user._id %>')">
+                  <% if (loggedInUser && loggedInUser.following && loggedInUser.following.includes(user._id)) { %>
+                    Unfollow
+                  <% } else if (user && user.isRequested) { %>
+                    Follow Requested
+                  <% } else { %>
+                    Follow
+                  <% } %>
+                </button>
+                
+                
 
-      <!-- Display user's blogs -->
-      <div class="blogs">
-        <% if (publicBlogs.length > 0) { %> <% publicBlogs.forEach(blog => { %>
-        <div class="blog-item">
-          <h3 class="blog-title"><%= blog.title %></h3>
-          <div class="blog-cover-image">
-            <img src="<%= blog.coverImageUrl %>" alt="Blog Cover Image" />
+              </div>
+            </div>
           </div>
-          <p class="blog-body"><%= blog.body %></p>
         </div>
-        <% }) %> <% } else { %>
-        <p>No public blogs available.</p>
+      </div>
+      <div class="blogs">
+        <% if (blogs && blogs.length > 0) { %>
+          <% blogs.forEach(blog => { %>
+            <% if (!blog.isPrivate || (loggedInUser && loggedInUser.following && loggedInUser.following.includes(user._id))) { %>
+              <div
+                class="blog-item"
+                id="blog-item-<%= blog._id %>"
+                onclick="redirectToBlog('/blog/<%= blog._id %>')"
+              >
+                <div class="blog-header">
+                  <h3 class="blog-title"><%= blog.title %></h3>
+                  <p class="created-at"><%= blog.createdAt %></p>
+                </div>
+                <div class="blog-cover-image">
+                  <img src="<%= blog.coverImageUrl %>" alt="Blog Cover Image" />
+                </div>
+                <p class="blog-body"><%= blog.body %></p>
+              </div>
+            <% } %>
+          <% }) %>
+        <% } else { %>
+          <p class="no-blogs">No public blogs available.</p>
         <% } %>
       </div>
+    </div>
+      
+      <script>
+         function editProfile() {
+    // Redirect to the edit profile page
+    window.location.href = "/edit-profile";
+  }
+        function redirectToBlog(blogUrl) {
+          window.location.href = blogUrl;
+        }
+        async function followUser(userId) {
+          try {
+            const response = await fetch(`${userId}/follow`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              credentials: "include",
+            });
+
+            if (!response.ok) {
+              throw new Error(`Follow failed: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+
+            // Update the UI with the new follower count
+            updateFollowersCount(result.followersCount);
+
+            // Update the Follow button based on the current state
+            updateFollowButton(result.isFollowing);
+          } catch (error) {
+            console.error("Error following user:", error);
+          }
+        }
+
+        function updateFollowButton(isFollowing) {
+          const followButton = document.getElementById("followButton");
+
+          // Toggle the button text based on the current state
+          if (isFollowing) {
+            followButton.innerText = "Unfollow";
+          } else {
+            followButton.innerText = "Follow";
+          }
+        }
+
+        function updateFollowersCount(count) {
+          document.getElementById("followersCount").innerText = count;
+        }
+      </script>
+
     </div>
   </body>
 </html>

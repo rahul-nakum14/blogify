@@ -7,6 +7,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bookmarks</title>
     <style>
+      /* Add styles for the container of "Created at" and "Remove Bookmark" */
+      .content-details {
+        display: flex;
+        align-items: center; /* Align items vertically in the center */
+      }
+
+      /* Add margin or spacing between "Created at" and the button if needed */
+      .created-at {
+        margin-right: 10px; /* Adjust as needed */
+      }
+
+      /* Style for the Remove Bookmark button */
+      .remove-bookmark-button {
+        background-color: #2565c4; /* Adjust the color as needed */
+        color: #fff;
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        /* Optional: Hover effect for better user feedback */
+        transition: background-color 0.3s ease; /* Smooth transition effect */
+      }
+
+      .remove-bookmark-button:hover {
+        background-color: #1394df; /* Adjust the color as needed */
+      }
+
       .container {
         max-width: 800px;
         margin: 0 auto;
@@ -79,7 +107,6 @@
   </head>
   <body>
     <%- include('./partials/navbar') %>
-
     <div class="container">
       <h1>Your Bookmarks</h1>
 
@@ -87,7 +114,7 @@
       (userWithBookmarks.length > 0) { %>
       <ul class="bookmark-list">
         <% userWithBookmarks.forEach((bookmark) => { %>
-        <li class="bookmark-item">
+        <li class="bookmark-item" id="bookmark-item-<%= bookmark._id %>">
           <a href="/blog/<%= bookmark._id %>">
             <div class="bookmark-header">
               <% if (bookmark.createdBy) { %>
@@ -101,7 +128,6 @@
               <p class="username">Unknown User</p>
               <% } %>
             </div>
-
             <img
               class="blog-cover-image"
               src="<%= bookmark.coverImageUrl %>"
@@ -113,9 +139,18 @@
               <a href="/blog/<%= bookmark._id %>"><%= bookmark.title %></a>
             </h2>
             <p class="blog-body"><%= bookmark.body %></p>
-            <span class="created-at"
-              >Created at: <%= (bookmark.createdAt) %></span
-            >
+            <span class="content-details">
+              <span class="created-at"
+                >Created at: <%= (bookmark.createdAt) %></span
+              >
+              <!-- Add the Remove Bookmark button -->
+              <button
+                class="remove-bookmark-button"
+                onclick="removeBookmark('<%= bookmark._id %>')"
+              >
+                Remove Bookmark
+              </button>
+            </span>
           </div>
         </li>
         <% }) %>
@@ -126,8 +161,37 @@
       <script>
         window.location.href = "/users/signin";
       </script>
-      <% } %> <%- include("./partials/script") %>
+      <% } %>
+
+      <!-- Embed the removeBookmark function within script tags -->
+      <script>
+        function removeBookmark(blogId) {
+          fetch(`/blog/${blogId}/bookmark`, {
+            method: "DELETE", // Use DELETE method to remove the bookmark
+          })
+            .then((response) => {
+              if (response.ok) {
+                return response.json();
+              } else {
+                throw new Error("Failed to remove bookmark");
+              }
+            })
+            .catch((error) => {
+              console.error("Error removing bookmark:", error);
+            })
+            .then((data) => {
+              if (data) {
+                // Handle UI update after successfully removing bookmark
+                const removedBookmark = document.getElementById(
+                  `bookmark-item-${blogId}`
+                );
+                removedBookmark.parentNode.removeChild(removedBookmark);
+              }
+            });
+        }
+      </script>
+
+      <%- include("./partials/script") %>
     </div>
-    
   </body>
 </html>
